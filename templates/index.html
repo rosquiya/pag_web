@@ -11,13 +11,15 @@
     <style>
         .content {
             text-align: center;
+            color: white;
+            text-shadow: 2px 2px 4px #000000;
         }
         .content h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
         }
         .info-box {
-            background-color: #f8f9fa;
+            background-color: rgba(248, 249, 250, 0.8);
             border: 1px solid #dee2e6;
             border-radius: 5px;
             padding: 20px;
@@ -25,6 +27,20 @@
             width: 45%;
             display: inline-block;
             vertical-align: top;
+        }
+        .background {
+            background-image: url('https://www.gob.mx/cms/uploads/article/main_image/93205/ALFALFA.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -54,13 +70,23 @@
     </nav>
 
     <!-- Contenido de la página principal -->
-    <div class="container mt-4 content">
-        <h1>Bienvenido a FoliarSage</h1>
-        <div class="info-box">
-            <p>En la sección de Administrador, podrás recopilar fotos para crear tu dataset personalizado.</p>
-        </div>
-        <div class="info-box">
-            <p>En la sección de Usuario, podrás tomar fotos de hojas de alfalfa para predecir enfermedades foliares.</p>
+    <div class="background">
+        <div class="overlay">
+            <div class="container content">
+                <h1>Bienvenido a FoliarSage</h1>
+                <div class="info-box">
+                    <p>En la sección de Administrador, podrás recopilar fotos para crear tu dataset personalizado.</p>
+                </div>
+                <div class="info-box">
+                    <p>En la sección de Usuario, podrás tomar fotos de hojas de alfalfa para predecir enfermedades foliares.</p>
+                </div>
+                <div class="info-box">
+                    <p>FoliarSage es tu herramienta confiable para monitorear y predecir enfermedades foliares en cultivos de alfalfa. Utilizando avanzados modelos de visión por computadora, nuestra aplicación captura y analiza imágenes de tus plantas, brindándote información precisa y oportuna para mantener la salud de tu cultivo.</p>
+                </div>
+                <div class="info-box">
+                    <p>Ya seas un agricultor experimentado o nuevo en el cultivo de alfalfa, nuestra plataforma está diseñada para ser fácil de usar y accesible, ayudándote a maximizar el rendimiento de tu cosecha y a reducir pérdidas por enfermedades.</p>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador</title>
+    <!-- Bootstrap CSS -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <style>
+        .welcome-header {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .sub-header {
+            margin-top: 20px;
+        }
+        .sub-header .nav-link {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            color: #007bff; /* Cambiar color */
+        }
+        .sub-header .nav-link:hover {
+            color: #0056b3; /* Cambiar color al pasar el cursor */
+        }
+        .content {
+            margin-top: 20px;
+        }
+        .camera-settings {
+            display: flex;
+            justify-content: space-between;
+        }
+        .camera-settings .form-group {
+            margin-right: 10px;
+        }
+        #camera-feed, #camera-feed-dataset {
+            max-width: 100%;
+            width: 480px;
+            height: 360px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        #preview-image {
+            max-width: 100%;
+            width: 320px;
+            height: 240px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+   
+
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">App web</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/admin">Administrador</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/logout">Cerrar Sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user">Usuario</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="welcome-header">
+        <h1>Bienvenido al Panel de Administrador</h1>
+    </div>
+
+
+    <!-- Sub-cabecera -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sub-header">
+        <div class="container">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#configurar-camara" onclick="showSection('configurar-camara')">Configurar Cámara</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#tomar-fotos" onclick="showSection('tomar-fotos')">Tomar Fotos para Dataset</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-4 content">
+        <!-- Sección Configurar Cámara -->
+        <div id="configurar-camara" class="section">
+            <h2>Configurar Cámara</h2>
+            <div class="camera-settings">
+                <form id="camera-config-form" action="/admin/save_camera_config" method="POST">
+                    <div class="form-group">
+                        <label for="brightness">Brillo</label>
+                        <input type="range" class="form-control" id="brightness" name="brightness" min="0" max="255" value="{{ camera_config['brightness'] }}" oninput="updateCameraSettings()">
+                    </div>
+                    <div class="form-group">
+                        <label for="saturation">Saturación</label>
+                        <input type="range" class="form-control" id="saturation" name="saturation" min="0" max="255" value="{{ camera_config['saturation'] }}" oninput="updateCameraSettings()">
+                    </div>
+                    <div class="form-group">
+                        <label for="contrast">Contraste</label>
+                        <input type="range" class="form-control" id="contrast" name="contrast" min="0" max="255" value="{{ camera_config['contrast'] }}" oninput="updateCameraSettings()">
+                    </div>
+                    <div class="form-group">
+                        <label for="focus">Enfoque</label>
+                        <input type="range" class="form-control" id="focus" name="focus" min="0" max="255" value="{{ camera_config['focus'] }}" oninput="updateCameraSettings()">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Configuración</button>
+                </form>
+                <div>
+                    <img src="{{ url_for('video_feed') }}" id="camera-feed" alt="Live Camera Feed">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección Tomar Fotos para Dataset -->
+        <div id="tomar-fotos" class="section" style="display:none;">
+            <h2>Tomar Fotos para Dataset</h2>
+            <div class="camera-settings">
+                <div>
+                    <img src="{{ url_for('video_feed') }}" id="camera-feed-dataset" alt="Live Camera Feed">
+                </div>
+                <div>
+                    <form id="capture-form" action="/capture_image" method="POST">
+                        <button type="submit" class="btn btn-primary">Tomar Foto</button>
+                    </form>
+                </div>
+                <div>
+                    <img id="preview-image" alt="Preview Image" style="display:none;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS y dependencias -->
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(function(section) {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        function updateCameraSettings() {
+            const brightness = document.getElementById('brightness').value;
+            const saturation = document.getElementById('saturation').value;
+            const contrast = document.getElementById('contrast').value;
+            const focus = document.getElementById('focus').value;
+
+            fetch('/admin/update_camera_settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    brightness: brightness,
+                    saturation: saturation,
+                    contrast: contrast,
+                    focus: focus
+                })
+            });
+        }
+
+        document.getElementById('camera-config-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            this.submit();
+        });
+
+        document.getElementById('capture-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('/capture_image', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const img = document.getElementById('preview-image');
+                    img.src = 'data:image/jpeg;base64,' + data.image;
+                    img.style.display = 'block';
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
